@@ -1,8 +1,8 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 
 type Inputs = {
-  example: string;
-  exampleRequired: string;
+  name: string;
+  email: string;
 };
 
 export const UserForm = () => {
@@ -11,20 +11,41 @@ export const UserForm = () => {
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm<Inputs>();
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
+  } = useForm<Inputs>({
+    defaultValues: {
+      name: "Jaimison",
+      email: "allen@globo.com",
+    },
+  });
+  const onSubmit: SubmitHandler<Inputs> = (data) => alert(JSON.stringify(data));
 
-  console.log(watch("example")); // watch input value by passing the name of it
+  console.log(watch("email")); // watch input value by passing the name of it
+  console.log("Error:", {
+    errors,
+  }); // watch input value by passing the name of it
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       {/* register your input into the hook by invoking the "register" function */}
-      <input defaultValue="test" {...register("example")} />
+      <input
+        placeholder="Name"
+        {...register("name", {
+          required: "Name is required",
+          minLength: {
+            value: 4,
+            message: "Name shoud be more than 8 characters",
+          },
+        })}
+      />
 
       {/* include validation with required or other standard HTML validation rules */}
-      <input {...register("exampleRequired", { required: true })} />
+      <input
+        placeholder="Email"
+        {...register("email", { required: "Email is required" })}
+      />
       {/* errors will return when field validation fails  */}
-      {errors.exampleRequired && <span>This field is required</span>}
+      {errors.name && <span>{errors.name.message}</span>}
+      {errors.email && <span>{errors.email.message} </span>}
 
       <input type="submit" />
     </form>
